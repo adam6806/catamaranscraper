@@ -1,12 +1,10 @@
 package com.github.adam6806.catamaranscraper.boatsite;
 
 import com.github.adam6806.catamaranscraper.main.Main;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -20,17 +18,8 @@ public class TestSelenium {
 
     public void test () throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
-        URL resource = classLoader.getResource("resource/drivers/geckodriver.exe");
-        File f = new File("Driver");
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-        File geckoDriver = new File("Driver" + File.separator + "geckodriver.exe");
-        if (!geckoDriver.exists()) {
-            geckoDriver.createNewFile();
-            FileUtils.copyURLToFile(resource, geckoDriver);
-        }
-        System.setProperty("webdriver.gecko.driver", "D:\\Downloads\\geckodriver-v0.18.0-win64\\geckodriver.exe");
+        URL resource = classLoader.getResource("drivers/geckodriver.exe");
+        System.setProperty("webdriver.gecko.driver", resource.getPath());
         FirefoxDriver driver = new FirefoxDriver();
         driver.get(Main.URL);
         WebElement webElement = driver.findElementById("searchResultsDetailsABTest");
