@@ -1,3 +1,4 @@
+import com.github.adam6806.catamaranscraper.dao.BoatEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,7 +14,7 @@ import java.util.Date;
 
 public class Main {
 
-    private static final String URL = "http://www.yachtworld.com/core/listing/cache/searchResults.jsp?toPrice=175000&fromPrice=25000&enid=101&Ntk=boatsEN&type=%28Sail%29+Catamaran&searchtype=advancedsearch&hmid=0&sm=3&enid=0&cit=true&luom=126&currencyid=100&boatsAddedSelected=-1&ftid=0&slim=quick&No=0&rid=100&rid=104&rid=105&rid=107&rid=112&rid=115&rid=125&fracts=1&ps=2000&Ns=PBoat_sortByPriceDesc|1";
+    public static final String URL = "http://www.yachtworld.com/core/listing/cache/searchResults.jsp?toPrice=175000&fromPrice=25000&enid=101&Ntk=boatsEN&type=%28Sail%29+Catamaran&searchtype=advancedsearch&hmid=0&sm=3&enid=0&cit=true&luom=126&currencyid=100&boatsAddedSelected=-1&ftid=0&slim=quick&No=0&rid=100&rid=104&rid=105&rid=107&rid=112&rid=115&rid=125&fracts=1&ps=2000&Ns=PBoat_sortByPriceDesc|1";
     private static final String MAIN_URL = "http://www.yachtworld.com";
 
     public static void main (String[] args) throws IOException {
@@ -21,7 +22,7 @@ public class Main {
         Document doc = Jsoup.connect(URL).get();
         System.out.println(doc.title());
         Elements listRows = doc.select(".listing-container");
-        ArrayList<Boat> boats = new ArrayList<>();
+        ArrayList<BoatEntity> boats = new ArrayList<>();
         for (Element element : listRows) {
             if (element.select(".price").text().startsWith("US")) {
                 Element link = element.select("a[href]").first();
@@ -37,10 +38,24 @@ public class Main {
                 String location = element.select(".location").text();
                 String image = element.select("img").attr("src");
                 Date date = new Date();
-                Boat boat = new Boat(price, makeModel, location, image, boatLink, length, year, date);
+                ArrayList<String> imageUrls = new ArrayList<>();
+                Document detailDoc = Jsoup.connect(boatLink).get();
+                Elements imageDivs = detailDoc.select(".galleria-image");
+                for (Element imageDiv : imageDivs) {
+                    String imageUrl = imageDiv.select("img").attr("src");
+                    imageUrls.add(imageUrl);
+                }
+                BoatEntity boat = new BoatEntity();
+                boat.setPrice(Long.parseLong(price));
+                boat.setMakeModel(makeModel);
+                boat.setLength(length);
+                boat.setYear(year);
+                boat.setLocation(location);
+                boat.setUrl(boatLink);
+                boat.setTimestamp(new java.sql.Date(date.getTime()));
                 try (
-                    Connection databaseConnection = Persistence.getDatabaseConnection();
-                    Statement statement = databaseConnection.createStatement();
+                        Connection databaseConnection = Persistence.getDatabaseConnection();
+                        Statement statement = databaseConnection.createStatement();
                 ){
                     String selectSQL = "select id from boat where url = '" + boatLink +"';";
                     ResultSet resultSet = statement.executeQuery(selectSQL);
@@ -64,9 +79,6 @@ public class Main {
         }
         if (boats.size() > 0) {
             StringBuilder stringBuilder = new StringBuilder();
-            for (Boat boat : boats) {
-                stringBuilder.append(boat.getHTML());
-            }
             EmailSender emailSender = new EmailSender();
             emailSender.sendEmail(stringBuilder.toString(), "asmith0935@gmail.com");
             emailSender.sendEmail(stringBuilder.toString(), "dsmith.mbe@gmail.com");

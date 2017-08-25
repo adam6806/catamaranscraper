@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.github.adam6806.catamaranscraper.dao.ImageEntity" table="image" schema="catamarans">
+        <id name="id">
+            <column name="id" sql-type="int(11)"/>
+        </id>
+        <property name="url">
+            <column name="url" sql-type="varchar(500)" length="500"/>
+        </property>
+        <many-to-one name="boatByBoat" class="com.github.adam6806.catamaranscraper.dao.BoatEntity">
+            <column name="boat" not-null="true"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>
