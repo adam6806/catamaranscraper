@@ -23,6 +23,7 @@ public class TestBoatSite implements BoatSite {
         boatEntity.setMakeModel("make and model");
         boatEntity.setPrice(175000);
         boatEntity.setDescription("This is a lengthy description");
+        boatEntity.setActive(new Byte("1"));
         boatEntities = new ArrayList<>();
         imageEntities = new ArrayList<>();
         ImageEntity imageEntity = new ImageEntity();

@@ -60,4 +60,11 @@ public class ImageEntity {
     public void setBoatByBoat(BoatEntity boatByBoat) {
         this.boatByBoat = boatByBoat;
     }
+
+    @Override
+    public String toString() {
+        return "ImageEntity{" +
+                "url='" + url + '\'' +
+                '}';
+    }
 }

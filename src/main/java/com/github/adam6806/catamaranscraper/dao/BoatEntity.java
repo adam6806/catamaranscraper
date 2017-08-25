@@ -131,8 +131,8 @@ public class BoatEntity {
         this.active = active;
     }
 
-    @Basic
-    @Column(name = "timestamp", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "timestamp", nullable = false, updatable=false)
     public Date getTimestamp() {
         return timestamp;
     }
@@ -179,5 +179,21 @@ public class BoatEntity {
         result = 31 * result + (int) active;
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "BoatEntity{" +
+                "location='" + location + '\'' +
+                ", description='" + description + '\'' +
+                ", url='" + url + '\'' +
+                ", makeModel='" + makeModel + '\'' +
+                ", price=" + price +
+                ", length=" + length +
+                ", year=" + year +
+                ", dougRating=" + dougRating +
+                ", adamRating=" + adamRating +
+                ", active=" + active +
+                '}';
     }
 }
