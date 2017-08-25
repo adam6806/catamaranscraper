@@ -9,6 +9,7 @@ public class ExampleBoatSite implements BoatSite {
 
     @Override
     public List<BoatEntity> getBoatEntities() {
+        String test;
         return null;
     }
 
