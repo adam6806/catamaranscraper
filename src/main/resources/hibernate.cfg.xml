@@ -4,14 +4,15 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:mysql://pirateofdw.gotdns.com:8089/catamarans</property>
+        <property name="connection.url">jdbc:mysql://pirateofdw.gotdns.com:8089/catamarans?useSSL=false</property>
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.username">adam</property>
+        <property name="connection.password">MysqlaA1!</property>
         <mapping class="com.github.adam6806.catamaranscraper.dao.BoatEntity"/>
         <mapping class="com.github.adam6806.catamaranscraper.dao.ImageEntity"/>
-        <mapping resource="com/github/adam6806/catamaranscraper/dao/BoatEntity.hbm.xml"/>
-        <mapping resource="com/github/adam6806/catamaranscraper/dao/ImageEntity.hbm.xml"/>
-        <!-- <property name="connection.username"/> -->
-        <!-- <property name="connection.password"/> -->
+        <mapping resource="BoatEntity.hbm.xml"/>
+        <mapping resource="ImageEntity.hbm.xml"/>
+
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hbm2ddl.auto">update</property> -->

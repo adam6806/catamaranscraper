@@ -3,7 +3,7 @@ package com.github.adam6806.catamaranscraper.dao;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "image", schema = "catamarans", catalog = "")
+@Table(name = "image", schema = "catamarans")
 public class ImageEntity {
 
     private int id;
@@ -11,6 +11,7 @@ public class ImageEntity {
     private BoatEntity boatByBoat;
 
     @Id
+    @GeneratedValue
     @Column(name = "id", nullable = false)
     public int getId() {
         return id;

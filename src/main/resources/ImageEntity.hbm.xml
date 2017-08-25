@@ -7,6 +7,7 @@
     <class name="com.github.adam6806.catamaranscraper.dao.ImageEntity" table="image" schema="catamarans">
         <id name="id">
             <column name="id" sql-type="int(11)"/>
+            <generator class="identity" />
         </id>
         <property name="url">
             <column name="url" sql-type="varchar(500)" length="500"/>

@@ -29,19 +29,24 @@ public class Main {
         //creating transaction object
         Transaction t = session.beginTransaction();
 
-        BoatSiteFactory boatSiteFactory = new BoatSiteFactory();
-        List<BoatSite> boatSites = boatSiteFactory.getBoatSites();
-        for (BoatSite boatSite : boatSites) {
-            List<BoatEntity> boatEntities = boatSite.getBoatEntities();
-            for (BoatEntity boatEntity : boatEntities) {
-                session.persist(boatEntity);//persisting the object
+        try {
+            BoatSiteFactory boatSiteFactory = new BoatSiteFactory();
+            List<BoatSite> boatSites = boatSiteFactory.getBoatSites();
+            for (BoatSite boatSite : boatSites) {
+                List<BoatEntity> boatEntities = boatSite.getBoatEntities();
+                for (BoatEntity boatEntity : boatEntities) {
+                    session.saveOrUpdate(boatEntity);
+                }
+                List<ImageEntity> imageEntities = boatSite.getImageEntities();
+                for (ImageEntity imageEntity : imageEntities) {
+                    session.saveOrUpdate(imageEntity);//persisting the object
+                }
             }
-            List<ImageEntity> imageEntities = boatSite.getImageEntities();
-            for (ImageEntity imageEntity : imageEntities) {
-                session.persist(imageEntity);//persisting the object
-            }
+            t.commit();//transaction is commited
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            session.close();
         }
-        t.commit();//transaction is commited
-        session.close();
     }
 }

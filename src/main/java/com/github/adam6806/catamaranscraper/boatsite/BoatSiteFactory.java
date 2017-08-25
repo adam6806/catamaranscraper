@@ -5,24 +5,25 @@ import java.util.List;
 
 public class BoatSiteFactory {
 
-    private ExampleBoatSite exampleBoatSite;
+    private TestBoatSite testBoatSite;
+    private List<BoatSite> boatSites;
 
-    public static final String EXAMPLE = "example";
+    public static final String TEST = "test";
 
     public BoatSiteFactory() {
-        exampleBoatSite = new ExampleBoatSite();
+        testBoatSite = new TestBoatSite();
+        boatSites = new ArrayList<>();
+        boatSites.add(testBoatSite);
     }
 
     public BoatSite getBoatSite(String boatSite) {
         switch (boatSite) {
-            case EXAMPLE: return exampleBoatSite;
+            case TEST: return testBoatSite;
             default: throw new UnsupportedOperationException("This boat site does not exist. Please use constants available in BoatSiteFactoryClass");
         }
     }
 
     public List<BoatSite> getBoatSites() {
-        ArrayList<BoatSite> boatSites = new ArrayList<>();
-        boatSites.add(exampleBoatSite);
         return boatSites;
     }
 }
