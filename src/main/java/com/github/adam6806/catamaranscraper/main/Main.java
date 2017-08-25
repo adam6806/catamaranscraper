@@ -1,3 +1,7 @@
+package com.github.adam6806.catamaranscraper.main;
+
+import com.github.adam6806.catamaranscraper.dao.Persistence;
+import com.github.adam6806.catamaranscraper.email.EmailSender;
 import com.github.adam6806.catamaranscraper.dao.BoatEntity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

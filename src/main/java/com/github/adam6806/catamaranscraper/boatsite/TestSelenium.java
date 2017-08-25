@@ -1,3 +1,6 @@
+package com.github.adam6806.catamaranscraper.boatsite;
+
+import com.github.adam6806.catamaranscraper.main.Main;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
