@@ -6,9 +6,10 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class EmailSender {
-    public void sendEmail(String emailMessage, String toEmail){
 
-        try{
+    public static void sendEmail(String emailMessage, String toEmail) {
+
+        try {
             final String fromEmail = "asmith0935@gmail.com"; //requires valid gmail id
             final String password = "GmailaA1!"; // correct password for gmail id
 
@@ -41,7 +42,7 @@ public class EmailSender {
 
             Transport.send(message);
             System.out.println("Mail Sent");
-        }catch(Exception ex){
+        } catch (Exception ex) {
             System.out.println("Mail fail");
             System.out.println(ex);
         }

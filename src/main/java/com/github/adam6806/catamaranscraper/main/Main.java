@@ -2,11 +2,14 @@ package com.github.adam6806.catamaranscraper.main;
 
 import com.github.adam6806.catamaranscraper.boatsite.BoatSite;
 import com.github.adam6806.catamaranscraper.boatsite.BoatSiteFactory;
+import com.github.adam6806.catamaranscraper.email.EmailHtmlGenerator;
+import com.github.adam6806.catamaranscraper.email.EmailSender;
 import com.github.adam6806.catamaranscraper.persistence.BoatEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
@@ -30,6 +33,8 @@ public class Main {
         //creating session object
         Session session = factory.openSession();
 
+        Transaction transaction = session.beginTransaction();
+
         try {
             BoatSiteFactory boatSiteFactory = new BoatSiteFactory();
             List<BoatSite> boatSites = boatSiteFactory.getBoatSites();
@@ -37,7 +42,11 @@ public class Main {
             for (BoatSite boatSite : boatSites) {
                 saveBoatEntities(boatSite, newBoats, session, log);
             }
-            if (!newBoats.isEmpty()) System.out.println(newBoats);
+            if (!newBoats.isEmpty()) {
+                System.out.println(newBoats);
+                EmailSender.sendEmail(EmailHtmlGenerator.generateHTML(newBoats), "asmith0935@gmail.com");
+            }
+            transaction.commit();
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
