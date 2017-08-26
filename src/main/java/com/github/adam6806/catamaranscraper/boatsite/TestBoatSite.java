@@ -22,12 +22,12 @@ public class TestBoatSite implements BoatSite {
         boatEntity.setPrice(175000);
         boatEntity.setDescription("This is a lengthy description");
         boatEntity.setActive(new Byte("1"));
-        boatEntity.setSiteUrl("siteurl");
+        boatEntity.setSiteUrl("http://www.google.com");
         boatEntities = new ArrayList<>();
         imageEntities = new HashSet<>();
         ImageEntity imageEntity = new ImageEntity();
         imageEntity.setBoat(boatEntity);
-        imageEntity.setUrl("http://www.google.com");
+        imageEntity.setUrl("http://newimages.yachtworld.com/resize/1/33/56/4883356_20170817151932287_1_XLARGE.jpg?f=/1/33/56/4883356_20170817151932287_1_XLARGE.jpg&w=924&h=693&t=1503012043000");
         imageEntities.add(imageEntity);
         boatEntity.setImages(imageEntities);
         boatEntities.add(boatEntity);
