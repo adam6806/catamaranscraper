@@ -5,14 +5,12 @@ import java.util.List;
 
 public class BoatSiteFactory {
 
-    private TestBoatSite testBoatSite;
-    private List<BoatSite> boatSites;
+    private TestBoatSite testBoatSite = new TestBoatSite();
+    private List<BoatSite> boatSites = new ArrayList<>();
 
     public static final String TEST = "test";
 
     public BoatSiteFactory() {
-        testBoatSite = new TestBoatSite();
-        boatSites = new ArrayList<>();
         boatSites.add(testBoatSite);
     }
 

@@ -1,4 +1,4 @@
-package com.github.adam6806.catamaranscraper.dao;
+package com.github.adam6806.catamaranscraper.persistence;
 
 import javax.persistence.*;
 
@@ -8,10 +8,10 @@ public class ImageEntity {
 
     private int id;
     private String url;
-    private BoatEntity boatByBoat;
+    private BoatEntity boat;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public int getId() {
         return id;
@@ -29,6 +29,16 @@ public class ImageEntity {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "boat", referencedColumnName = "id")
+    public BoatEntity getBoat() {
+        return boat;
+    }
+
+    public void setBoat(BoatEntity boat) {
+        this.boat = boat;
     }
 
     @Override
@@ -49,16 +59,6 @@ public class ImageEntity {
         int result = id;
         result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "boat", referencedColumnName = "id")
-    public BoatEntity getBoatByBoat() {
-        return boatByBoat;
-    }
-
-    public void setBoatByBoat(BoatEntity boatByBoat) {
-        this.boatByBoat = boatByBoat;
     }
 
     @Override

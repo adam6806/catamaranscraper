@@ -8,10 +8,8 @@
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="connection.username">adam</property>
         <property name="connection.password">MysqlaA1!</property>
-        <mapping class="com.github.adam6806.catamaranscraper.dao.BoatEntity"/>
-        <mapping class="com.github.adam6806.catamaranscraper.dao.ImageEntity"/>
-        <mapping resource="BoatEntity.hbm.xml"/>
-        <mapping resource="ImageEntity.hbm.xml"/>
+        <mapping class="com.github.adam6806.catamaranscraper.persistence.BoatEntity"/>
+        <mapping class="com.github.adam6806.catamaranscraper.persistence.ImageEntity"/>
 
 
         <!-- DB schema will be updated if needed -->

@@ -1,16 +1,14 @@
 package com.github.adam6806.catamaranscraper.boatsite;
 
-import com.github.adam6806.catamaranscraper.dao.BoatEntity;
-import com.github.adam6806.catamaranscraper.dao.ImageEntity;
+import com.github.adam6806.catamaranscraper.persistence.BoatEntity;
+import com.github.adam6806.catamaranscraper.persistence.ImageEntity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class TestBoatSite implements BoatSite {
 
     ArrayList<BoatEntity> boatEntities;
-    ArrayList<ImageEntity> imageEntities;
+    Set<ImageEntity> imageEntities;
 
     @Override
     public List<BoatEntity> getBoatEntities() {
@@ -24,18 +22,15 @@ public class TestBoatSite implements BoatSite {
         boatEntity.setPrice(175000);
         boatEntity.setDescription("This is a lengthy description");
         boatEntity.setActive(new Byte("1"));
+        boatEntity.setSiteUrl("siteurl");
         boatEntities = new ArrayList<>();
-        imageEntities = new ArrayList<>();
+        imageEntities = new HashSet<>();
         ImageEntity imageEntity = new ImageEntity();
-        imageEntity.setBoatByBoat(boatEntity);
+        imageEntity.setBoat(boatEntity);
         imageEntity.setUrl("http://www.google.com");
         imageEntities.add(imageEntity);
+        boatEntity.setImages(imageEntities);
         boatEntities.add(boatEntity);
         return boatEntities;
-    }
-
-    @Override
-    public List<ImageEntity> getImageEntities() {
-        return imageEntities;
     }
 }
