@@ -1,91 +1,65 @@
 package com.github.adam6806.catamaranscraper.main;
 
-import com.github.adam6806.catamaranscraper.dao.Persistence;
-import com.github.adam6806.catamaranscraper.email.EmailSender;
-import com.github.adam6806.catamaranscraper.dao.BoatEntity;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import com.github.adam6806.catamaranscraper.boatsite.BoatSite;
+import com.github.adam6806.catamaranscraper.boatsite.BoatSiteFactory;
+import com.github.adam6806.catamaranscraper.persistence.BoatEntity;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 public class Main {
 
-    public static final String URL = "http://www.yachtworld.com/core/listing/cache/searchResults.jsp?toPrice=175000&fromPrice=25000&enid=101&Ntk=boatsEN&type=%28Sail%29+Catamaran&searchtype=advancedsearch&hmid=0&sm=3&enid=0&cit=true&luom=126&currencyid=100&boatsAddedSelected=-1&ftid=0&slim=quick&No=0&rid=100&rid=104&rid=105&rid=107&rid=112&rid=115&rid=125&fracts=1&ps=2000&Ns=PBoat_sortByPriceDesc|1";
-    private static final String MAIN_URL = "http://www.yachtworld.com";
+    public static void main(String[] args) throws IOException {
 
-    public static void main (String[] args) throws IOException {
+        Log log = new SimpleLog("Main");
 
-        Document doc = Jsoup.connect(URL).get();
-        System.out.println(doc.title());
-        Elements listRows = doc.select(".listing-container");
-        ArrayList<BoatEntity> boats = new ArrayList<>();
-        for (Element element : listRows) {
-            if (element.select(".price").text().startsWith("US")) {
-                Element link = element.select("a[href]").first();
-                String boatLink = MAIN_URL + link.attr("href");
-                String price = element.select(".price").text();
-                price = price.substring(3);
-                price = price.replaceAll(",", "");
-                String makeModel = element.select(".make-model").text();
-                makeModel = makeModel.replaceAll("'", "");
-                int length = Integer.parseInt(makeModel.substring(0,2));
-                int year = Integer.parseInt(makeModel.substring(6,10));
-                makeModel = makeModel.substring(11);
-                String location = element.select(".location").text();
-                String image = element.select("img").attr("src");
-                Date date = new Date();
-                ArrayList<String> imageUrls = new ArrayList<>();
-                Document detailDoc = Jsoup.connect(boatLink).get();
-                Elements imageDivs = detailDoc.select(".galleria-image");
-                for (Element imageDiv : imageDivs) {
-                    String imageUrl = imageDiv.select("img").attr("src");
-                    imageUrls.add(imageUrl);
-                }
-                BoatEntity boat = new BoatEntity();
-                boat.setPrice(Long.parseLong(price));
-                boat.setMakeModel(makeModel);
-                boat.setLength(length);
-                boat.setYear(year);
-                boat.setLocation(location);
-                boat.setUrl(boatLink);
-                boat.setTimestamp(new java.sql.Date(date.getTime()));
-                try (
-                        Connection databaseConnection = Persistence.getDatabaseConnection();
-                        Statement statement = databaseConnection.createStatement();
-                ){
-                    String selectSQL = "select id from boat where url = '" + boatLink +"';";
-                    ResultSet resultSet = statement.executeQuery(selectSQL);
-                    if (!resultSet.next()) {
-                        String insertSQL = "insert into boat (location, url, make_model, price, length, year, timestamp) VALUES ('" + location + "','" + boatLink + "','" + makeModel + "'," + price + "," + length + "," + year + ",CURDATE());";
-                        int countInserted = statement.executeUpdate(insertSQL);
-                        System.out.println(countInserted + " rows inserted");
-                        resultSet = statement.executeQuery(selectSQL);
-                        if (resultSet.next()) {
-                            int id = resultSet.getInt("id");
-                            insertSQL = "INSERT INTO image (url, boat) values ('" + image + "'," + id + ");";
-                            countInserted = statement.executeUpdate(insertSQL);
-                            System.out.println(countInserted + " rows inserted");
-                            boats.add(boat);
-                        }
-                    }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
+        //creating configuration object
+        Configuration cfg = new Configuration();
+        cfg.configure("hibernate.cfg.xml");//populates the data of the configuration file
+
+        //creating session factory object
+        SessionFactory factory = cfg.buildSessionFactory();
+
+        //creating session object
+        Session session = factory.openSession();
+
+        try {
+            BoatSiteFactory boatSiteFactory = new BoatSiteFactory();
+            List<BoatSite> boatSites = boatSiteFactory.getBoatSites();
+            List<BoatEntity> newBoats = new ArrayList<>();
+            for (BoatSite boatSite : boatSites) {
+                saveBoatEntities(boatSite, newBoats, session, log);
+            }
+            if (!newBoats.isEmpty()) System.out.println(newBoats);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            session.close();
+        }
+        System.exit(0);
+    }
+
+    private static void saveBoatEntities(BoatSite boatSite, List<BoatEntity> newBoats, Session session, Log log) {
+        List<BoatEntity> boatEntities = boatSite.getBoatEntities();
+        for (BoatEntity boatEntity : boatEntities) {
+            Query query = session.createQuery("from BoatEntity where url = :url ");
+            query.setParameter("url", boatEntity.getUrl());
+            BoatEntity boatEntityQuery = (BoatEntity) query.uniqueResult();
+            if (boatEntityQuery == null) {
+                try {
+                    session.save(boatEntity);
+                    newBoats.add(boatEntity);
+                } catch (Exception ex) {
+                    log.error("Boat Entity already exists: " + boatEntity);
                 }
             }
-        }
-        if (boats.size() > 0) {
-            StringBuilder stringBuilder = new StringBuilder();
-            EmailSender emailSender = new EmailSender();
-            emailSender.sendEmail(stringBuilder.toString(), "asmith0935@gmail.com");
-            emailSender.sendEmail(stringBuilder.toString(), "dsmith.mbe@gmail.com");
         }
     }
 }

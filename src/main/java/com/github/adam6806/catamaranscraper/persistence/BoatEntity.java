@@ -1,10 +1,11 @@
-package com.github.adam6806.catamaranscraper.dao;
+package com.github.adam6806.catamaranscraper.persistence;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
-@Table(name = "boat", schema = "catamarans", catalog = "")
+@Table(name = "boat", schema = "catamarans")
 public class BoatEntity {
 
     private int id;
@@ -19,8 +20,11 @@ public class BoatEntity {
     private int adamRating;
     private byte active;
     private Date timestamp;
+    private String siteUrl;
+    private Set<ImageEntity> images;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public int getId() {
         return id;
@@ -140,6 +144,25 @@ public class BoatEntity {
         this.timestamp = timestamp;
     }
 
+    @Basic
+    @Column(name = "site_url", nullable = false, length = 100)
+    public String getSiteUrl() {
+        return siteUrl;
+    }
+
+    public void setSiteUrl(String siteUrl) {
+        this.siteUrl = siteUrl;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "boat")
+    public Set<ImageEntity> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<ImageEntity> images) {
+        this.images = images;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -159,6 +182,7 @@ public class BoatEntity {
         if (length != null ? !length.equals(that.length) : that.length != null) return false;
         if (year != null ? !year.equals(that.year) : that.year != null) return false;
         if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
+        if (siteUrl != null ? !siteUrl.equals(that.siteUrl) : that.siteUrl != null) return false;
 
         return true;
     }
@@ -177,6 +201,27 @@ public class BoatEntity {
         result = 31 * result + adamRating;
         result = 31 * result + (int) active;
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
+        result = 31 * result + (siteUrl != null ? siteUrl.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "BoatEntity{" +
+                "id=" + id +
+                ", location='" + location + '\'' +
+                ", description='" + description + '\'' +
+                ", url='" + url + '\'' +
+                ", makeModel='" + makeModel + '\'' +
+                ", price=" + price +
+                ", length=" + length +
+                ", year=" + year +
+                ", dougRating=" + dougRating +
+                ", adamRating=" + adamRating +
+                ", active=" + active +
+                ", timestamp=" + timestamp +
+                ", siteUrl='" + siteUrl + '\'' +
+                ", images=" + images +
+                '}';
     }
 }

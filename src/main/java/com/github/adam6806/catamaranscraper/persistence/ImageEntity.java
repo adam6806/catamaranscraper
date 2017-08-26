@@ -1,16 +1,17 @@
-package com.github.adam6806.catamaranscraper.dao;
+package com.github.adam6806.catamaranscraper.persistence;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "image", schema = "catamarans", catalog = "")
+@Table(name = "image", schema = "catamarans")
 public class ImageEntity {
 
     private int id;
     private String url;
-    private BoatEntity boatByBoat;
+    private BoatEntity boat;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public int getId() {
         return id;
@@ -28,6 +29,16 @@ public class ImageEntity {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "boat", referencedColumnName = "id")
+    public BoatEntity getBoat() {
+        return boat;
+    }
+
+    public void setBoat(BoatEntity boat) {
+        this.boat = boat;
     }
 
     @Override
@@ -50,13 +61,10 @@ public class ImageEntity {
         return result;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "boat", referencedColumnName = "id")
-    public BoatEntity getBoatByBoat() {
-        return boatByBoat;
-    }
-
-    public void setBoatByBoat(BoatEntity boatByBoat) {
-        this.boatByBoat = boatByBoat;
+    @Override
+    public String toString() {
+        return "ImageEntity{" +
+                "url='" + url + '\'' +
+                '}';
     }
 }
