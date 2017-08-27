@@ -17,7 +17,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        Log log = new SimpleLog("Main");
+        Log log = new SimpleLog(Main.class.getName());
 
         BoatService boatService = new BoatService();
         BoatSiteFactory boatSiteFactory = new BoatSiteFactory();
