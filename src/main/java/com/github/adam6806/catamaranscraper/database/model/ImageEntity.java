@@ -1,4 +1,4 @@
-package com.github.adam6806.catamaranscraper.persistence;
+package com.github.adam6806.catamaranscraper.database.model;
 
 import javax.persistence.*;
 
