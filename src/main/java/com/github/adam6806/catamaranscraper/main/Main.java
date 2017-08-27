@@ -39,12 +39,8 @@ public class Main {
         for (BoatEntity boatEntity : boatEntities) {
             BoatEntity boatEntityQuery = boatService.findByUrl(boatEntity.getUrl());
             if (boatEntityQuery == null) {
-                try {
-                    boatService.save(boatEntity);
-                    newBoats.add(boatEntity);
-                } catch (Exception ex) {
-                    log.error("Boat Entity already exists: " + boatEntity);
-                }
+                boatService.save(boatEntity);
+                newBoats.add(boatEntity);
             }
         }
     }
