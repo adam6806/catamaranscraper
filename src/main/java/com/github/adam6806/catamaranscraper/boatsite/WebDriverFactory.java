@@ -1,5 +1,6 @@
 package com.github.adam6806.catamaranscraper.boatsite;
 
+import driver.Driver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.FileNotFoundException;
@@ -7,9 +8,9 @@ import java.net.URL;
 
 public class WebDriverFactory {
 
-    private static FirefoxDriver webDriver;
+    private static Driver webDriver;
 
-    public static FirefoxDriver getWebDriver() throws FileNotFoundException {
+    public static Driver getWebDriver() throws FileNotFoundException {
         ClassLoader classLoader = WebDriverFactory.class.getClassLoader();
         URL resource = classLoader.getResource("drivers/geckodriver.exe");
         if (resource == null) {
@@ -17,7 +18,7 @@ public class WebDriverFactory {
         }
         System.setProperty("webdriver.gecko.driver", resource.getPath());
         if (webDriver == null) {
-            webDriver = new FirefoxDriver();
+            webDriver = new Driver();
         }
         return webDriver;
     }
