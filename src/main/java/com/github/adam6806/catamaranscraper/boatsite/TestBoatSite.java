@@ -1,7 +1,7 @@
 package com.github.adam6806.catamaranscraper.boatsite;
 
-import com.github.adam6806.catamaranscraper.persistence.BoatEntity;
-import com.github.adam6806.catamaranscraper.persistence.ImageEntity;
+import com.github.adam6806.catamaranscraper.database.model.BoatEntity;
+import com.github.adam6806.catamaranscraper.database.model.ImageEntity;
 
 import java.util.*;
 

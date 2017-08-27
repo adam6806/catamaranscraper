@@ -8,8 +8,8 @@
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="connection.username">adam</property>
         <property name="connection.password">MysqlaA1!</property>
-        <mapping class="com.github.adam6806.catamaranscraper.persistence.BoatEntity"/>
-        <mapping class="com.github.adam6806.catamaranscraper.persistence.ImageEntity"/>
+        <mapping class="com.github.adam6806.catamaranscraper.database.model.BoatEntity"/>
+        <mapping class="com.github.adam6806.catamaranscraper.database.model.ImageEntity"/>
 
 
         <!-- DB schema will be updated if needed -->

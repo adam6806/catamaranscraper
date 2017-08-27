@@ -1,6 +1,6 @@
 package com.github.adam6806.catamaranscraper.email;
 
-import com.github.adam6806.catamaranscraper.persistence.BoatEntity;
+import com.github.adam6806.catamaranscraper.database.model.BoatEntity;
 
 import java.util.List;
 
