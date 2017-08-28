@@ -131,12 +131,12 @@ public class YachtWorldBoatSite implements BoatSite {
             try {
                 boat.setYear(Integer.parseInt(year));
             } catch (NumberFormatException e) {
-                throw new BoatSiteDownException("Unable to parse Year into an integer");
+                throw new BoatSiteDownException("Unable to parse Year into an integer: " + year);
             }
 
             boat.setMakeModel(makeModel);
         } else {
-            throw new BoatSiteDownException("Could not find boat title locator - leaving make and model empty");
+            throw new BoatSiteDownException("Could not find boat title locator.");
         }
 
         return boat;
@@ -156,11 +156,11 @@ public class YachtWorldBoatSite implements BoatSite {
             try {
                 boat.setPrice(Long.parseLong(price));
             } catch (NumberFormatException e) {
-                throw new BoatSiteDownException("Unable to parse price into a long.");
+                throw new BoatSiteDownException("Unable to parse price into a long: " + price);
             }
 
         } else {
-            throw new BoatSiteDownException("Unable to find the Price locator. Unable to scrape boat listing.");
+            throw new BoatSiteDownException("Unable to find the Price locator.");
         }
         return boat;
     }
@@ -232,17 +232,26 @@ public class YachtWorldBoatSite implements BoatSite {
 
                         for (int i = 0; i < splitDetails.length; i++) {
                             String detail = splitDetails[i];
-                            stringBuilder.append(detail.trim()).append(" ");
+                            String detailUpperCase = detail.toUpperCase();
 
-                            if (detail.contains("Length")) {
+                            if (detailUpperCase.contains("LENGTH")) {
                                 try {
                                     String length = ScraperUtils.cleanNumber(splitDetails[i + 1]);
                                     boat.setLength(Integer.parseInt(length));
-                                    stringBuilder.append(length).append(" ");
                                     i++;
                                 } catch (NumberFormatException nfe) {
                                     throw new BoatSiteDownException("Unable to parse length into an integer: " + nfe.getMessage());
                                 }
+                            } else if(detailUpperCase.contains("YEAR")
+                                    || detailUpperCase.contains("LOCATED IN")
+                                    || detailUpperCase.contains("ENGINE/FUEL TYPE")
+                                    || detailUpperCase.contains("HULL MATERIAL")
+                                    || detailUpperCase.contains("YW#")
+                                    || detailUpperCase.contains("CURRENT PRICE")) {
+                                //This description information is not needed, and will need to be skipped.
+                                i++;
+                            } else {
+                                stringBuilder.append(detail.trim()).append(" ");
                             }
                         }
                     } else {
