@@ -55,7 +55,11 @@ public class ScraperUtils {
         return html;
     }
 
-    public static String cleanPrice(String price) {
-        return price.replaceAll(",", "");
+    public static String cleanNumber(String price) {
+
+        price = price.replaceAll("'", "");
+        price = price.replaceAll(",", "");
+        price = price.replaceAll("\\$", "");
+        return price.trim();
     }
 }
