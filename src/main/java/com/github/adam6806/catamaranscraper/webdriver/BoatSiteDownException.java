@@ -1,4 +1,4 @@
-package com.github.adam6806.catamaranscraper.exceptions;
+package com.github.adam6806.catamaranscraper.webdriver;
 
 public class BoatSiteDownException extends Exception {
 

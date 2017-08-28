@@ -1,8 +1,7 @@
-package driver;
+package com.github.adam6806.catamaranscraper.webdriver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
-import org.apache.logging.log4j.Level;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -16,11 +15,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 
-public class Driver implements WebDriver{
-    Log logger = new SimpleLog(Driver.class.getName());
+public class Driver implements WebDriver {
 
-    private WebDriver driver;
     private final int DEFAULT_TIME_OUT = 30;
+    Log logger = new SimpleLog(Driver.class.getName());
+    private WebDriver driver;
     private int timeout = DEFAULT_TIME_OUT;
 
     public Driver() {
@@ -45,7 +44,7 @@ public class Driver implements WebDriver{
 
     @Override
     public String getCurrentUrl() {
-       return driver.getCurrentUrl();
+        return driver.getCurrentUrl();
     }
 
     @Override
@@ -55,7 +54,7 @@ public class Driver implements WebDriver{
 
     @Override
     public List<WebElement> findElements(By by) {
-       return driver.findElements(by);
+        return driver.findElements(by);
     }
 
     @Override
@@ -104,7 +103,7 @@ public class Driver implements WebDriver{
     }
 
     public void waitForElementVisible(By by, int timeOut) {
-        try{
+        try {
             WebDriverWait wait = new WebDriverWait(driver, timeOut);
             WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(by));
         } catch (TimeoutException e) {
@@ -118,7 +117,7 @@ public class Driver implements WebDriver{
             WebDriverWait wait = new WebDriverWait(driver, timeOut);
             WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(by));
         } catch (TimeoutException e) {
-          throw new IllegalStateException(e.getMessage());
+            throw new IllegalStateException(e.getMessage());
         }
     }
 
@@ -129,7 +128,7 @@ public class Driver implements WebDriver{
 
     public boolean isElementPresent(By by) {
         boolean isPresent = false;
-        try{
+        try {
             waitForLoad();
 
             if (!this.findElements(by).isEmpty()) {
@@ -149,7 +148,7 @@ public class Driver implements WebDriver{
             @Nullable
             @Override
             public Boolean apply(@Nullable WebDriver webDriver) {
-                return  "complete".equals(((JavascriptExecutor) driver).executeScript("return document.readyState"));
+                return "complete".equals(((JavascriptExecutor) driver).executeScript("return document.readyState"));
             }
         };
         WebDriverWait wait = new WebDriverWait(this, timeout);
@@ -164,7 +163,7 @@ public class Driver implements WebDriver{
 
     public String getElementHtml(By by) {
         WebElement element = driver.findElement(by);
-        String html = (String)((JavascriptExecutor)driver).executeScript("return arguments[0].innerHTML;", element);
-        return  html;
+        String html = (String) ((JavascriptExecutor) driver).executeScript("return arguments[0].innerHTML;", element);
+        return html;
     }
 }

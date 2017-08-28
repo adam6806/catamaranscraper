@@ -1,4 +1,4 @@
-package com.github.adam6806.catamaranscraper.boatsitescraperutils;
+package com.github.adam6806.catamaranscraper.webdriver;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
@@ -10,17 +10,19 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class ScraperUtils {
+
     private static Log logger = new SimpleLog(ScraperUtils.class.getName());
+
     public static String getTextByPattern(String extractionPattern, String src) {
-        try{
+        try {
             Pattern pattern = Pattern.compile(extractionPattern);
 
             Matcher matcher = pattern.matcher(src);
 
-            if(matcher.find() && (matcher.groupCount() >= 1)) {
+            if (matcher.find() && (matcher.groupCount() >= 1)) {
                 return matcher.group(1);
             }
-        } catch(PatternSyntaxException e) {
+        } catch (PatternSyntaxException e) {
             logger.error("getTextByPattern Error: " + e.getMessage());
         }
 
@@ -29,17 +31,17 @@ public class ScraperUtils {
 
     public static List<String> getTextArrayByPattern(String extractionPattern, String src) {
         List<String> matchedStrings = new ArrayList<>();
-        try{
+        try {
             Pattern pattern = Pattern.compile(extractionPattern);
 
             Matcher matcher = pattern.matcher(src);
 
-            while(matcher.find()) {
-                if(matcher.groupCount() >= 1) {
+            while (matcher.find()) {
+                if (matcher.groupCount() >= 1) {
                     matchedStrings.add(matcher.group(1));
                 }
             }
-        }catch(PatternSyntaxException e) {
+        } catch (PatternSyntaxException e) {
             logger.error("getTextArrayByPattern Error: " + e.getMessage());
         }
 

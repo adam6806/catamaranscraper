@@ -12,6 +12,13 @@ public abstract class AbstractDAO<T> {
     private Session session;
     private Transaction transaction;
 
+    private static SessionFactory getSessionFactory() {
+
+        Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
+        SessionFactory sessionFactory = configuration.buildSessionFactory();
+        return sessionFactory;
+    }
+
     public Session openSession() {
         session = getSessionFactory().openSession();
         return session;
@@ -30,13 +37,6 @@ public abstract class AbstractDAO<T> {
     public void closeSessionWithTransaction() {
         transaction.commit();
         session.close();
-    }
-
-    private static SessionFactory getSessionFactory() {
-
-        Configuration configuration = new Configuration().configure("hibernate.cfg.xml");;
-        SessionFactory sessionFactory = configuration.buildSessionFactory();
-        return sessionFactory;
     }
 
     protected Session getSession() {

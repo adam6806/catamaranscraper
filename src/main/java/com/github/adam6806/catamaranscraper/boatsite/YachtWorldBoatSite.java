@@ -3,40 +3,40 @@ package com.github.adam6806.catamaranscraper.boatsite;
 
 import com.github.adam6806.catamaranscraper.database.model.BoatEntity;
 import com.github.adam6806.catamaranscraper.database.model.ImageEntity;
-import com.github.adam6806.catamaranscraper.exceptions.BoatSiteDownException;
-import driver.Driver;
+import com.github.adam6806.catamaranscraper.webdriver.BoatSiteDownException;
+import com.github.adam6806.catamaranscraper.webdriver.Driver;
+import com.github.adam6806.catamaranscraper.webdriver.ScraperUtils;
+import com.github.adam6806.catamaranscraper.webdriver.WebDriverFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.SimpleLog;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.SimpleLog;
-import com.github.adam6806.catamaranscraper.boatsitescraperutils.ScraperUtils;
 
 public class YachtWorldBoatSite implements BoatSite {
-    private Log logger = new SimpleLog(YachtWorldBoatSite.class.getName());
 
-    private List<BoatEntity> entities;
     private static final String URL = "http://www.yachtworld.com/core/listing/cache/searchResults.jsp?toPrice=175000&fromPrice=25000&enid=101&Ntk=boatsEN&type=%28Sail%29+Catamaran&searchtype=advancedsearch&hmid=0&sm=3&enid=0&cit=true&luom=126&currencyid=100&boatsAddedSelected=-1&ftid=0&slim=quick&No=0&rid=100&rid=104&rid=105&rid=107&rid=112&rid=115&rid=125&fracts=1&ps=2000&Ns=PBoat_sortByPriceDesc|1";
     private static final String MAIN_URL = "http://www.yachtworld.com";
+    private Log logger = new SimpleLog(YachtWorldBoatSite.class.getName());
+    private List<BoatEntity> entities;
     private Driver driver;
+
     public static void main(String[] args) {
-            YachtWorldBoatSite yachtWorldBoatSite = new YachtWorldBoatSite();
-            yachtWorldBoatSite.run();
+        YachtWorldBoatSite yachtWorldBoatSite = new YachtWorldBoatSite();
+        yachtWorldBoatSite.run();
 
     }
 
     private void setUp() throws FileNotFoundException {
         driver = WebDriverFactory.getWebDriver();
     }
+
     private void run() {
-        try{
+        try {
             setUp();
             navigateToUrl(URL);
 
@@ -52,8 +52,10 @@ public class YachtWorldBoatSite implements BoatSite {
 
         quit();
     }
+
     @Override
-    public List<BoatEntity> getBoatEntities()  {
+    public List<BoatEntity> getBoatEntities() {
+        run();
         return entities;
     }
 
@@ -62,13 +64,13 @@ public class YachtWorldBoatSite implements BoatSite {
         List<String> urls = new ArrayList<>();
         By makeModelLoc = By.cssSelector("div.make-model a");
         //get all search results rows
-        if(driver.isElementPresent(makeModelLoc)){
+        if (driver.isElementPresent(makeModelLoc)) {
             List<WebElement> rows = driver.findElements(makeModelLoc);
 
             //grab the url's to go to the listing page
-            for(WebElement row : rows) {
+            for (WebElement row : rows) {
                 String url = row.getAttribute("href");
-                if(url.contains("boat")) {
+                if (url.contains("boat")) {
                     urls.add(url);
                 } else {
                     logger.warn("URL found on page does not contain 'boat' may not be a boat listing: " + url);
@@ -80,11 +82,10 @@ public class YachtWorldBoatSite implements BoatSite {
         return urls;
     }
 
-
     private List<BoatEntity> navigateIntoURLAndScrapeListing(List<String> urls) throws BoatSiteDownException {
         List<BoatEntity> boats = new ArrayList<>();
 
-        for(String url : urls) {
+        for (String url : urls) {
             navigateToUrl(url);
             boats.add(scrapeListing());
         }
@@ -108,6 +109,7 @@ public class YachtWorldBoatSite implements BoatSite {
         boat = setImages(boat);
         boat = setDetailsAndLength(boat);
 
+        boat.setSiteUrl(MAIN_URL);
         boat.setUrl(driver.getCurrentUrl());
         boat.setActive(new Byte("1"));
         boat.setTimestamp(new java.sql.Date(new Date().getTime()));
@@ -118,7 +120,7 @@ public class YachtWorldBoatSite implements BoatSite {
         logger.info("Setting make mode and year.");
 
         By boatTitleLoc = By.className("boat-title");
-        if(driver.isElementPresent(boatTitleLoc)){
+        if (driver.isElementPresent(boatTitleLoc)) {
             String boatTitle = ScraperUtils.cleanHTML(driver.getElementHtml(boatTitleLoc));
             boatTitle = boatTitle.replaceAll("<[/]?h1>", "");
 
@@ -127,7 +129,7 @@ public class YachtWorldBoatSite implements BoatSite {
             String makeModel = ScraperUtils.getTextByPattern(makeModelPattern, boatTitle);
             String year = ScraperUtils.getTextByPattern(yearPattern, boatTitle);
 
-            try{
+            try {
                 boat.setYear(Integer.parseInt(year));
             } catch (NumberFormatException e) {
                 throw new BoatSiteDownException("Unable to parse Year into an integer");
@@ -146,15 +148,15 @@ public class YachtWorldBoatSite implements BoatSite {
 
         By boatPriceLoc = By.className("boat-price");
 
-        if(driver.isElementPresent(boatPriceLoc)) {
+        if (driver.isElementPresent(boatPriceLoc)) {
             String priceSrc = ScraperUtils.cleanHTML(driver.getElementHtml(boatPriceLoc));
             String priceUSExtractionPattern = "US\\$\\s*([0-9,.]*)";
 
             String price = ScraperUtils.cleanPrice(ScraperUtils.getTextByPattern(priceUSExtractionPattern, priceSrc));
 
-            try{
+            try {
                 boat.setPrice(Long.parseLong(price));
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 throw new BoatSiteDownException("Unable to parse price into a long.");
             }
 
@@ -169,7 +171,7 @@ public class YachtWorldBoatSite implements BoatSite {
 
         By boatLocationLoc = By.className("boat-location");
 
-        if(driver.isElementPresent(boatLocationLoc)) {
+        if (driver.isElementPresent(boatLocationLoc)) {
             String locationSrc = ScraperUtils.cleanHTML(driver.getElementHtml(boatLocationLoc));
             boat.setLocation(locationSrc);
         } else {
@@ -186,7 +188,7 @@ public class YachtWorldBoatSite implements BoatSite {
         By mainImageLoc = By.className("galleria-images");
         String imageSrcPattern = "<img.*?src=\"(.*?)\"";
 
-        if(driver.isElementPresent(galleryCarousel)
+        if (driver.isElementPresent(galleryCarousel)
                 && driver.isElementPresent(mainImageLoc)) {
 
             String mainImageSrc = ScraperUtils.cleanHTML(driver.getElementHtml(mainImageLoc));
@@ -194,15 +196,17 @@ public class YachtWorldBoatSite implements BoatSite {
             List<String> divList = getDivList(caroselImageSrc);
             divList.add(mainImageSrc);
 
-            for(String div : divList) {
+            for (String div : divList) {
                 if (StringUtils.isNotEmpty(div)
                         && div.contains("img")) {
                     String imageSrc = ScraperUtils.getTextByPattern(imageSrcPattern, div);
 
-                    ImageEntity imageEntity = new ImageEntity();
-                    imageEntity.setBoat(boat);
-                    imageEntity.setUrl(imageSrc);
-                    imageEntities.add(imageEntity);
+                    if (imageSrc.startsWith("http")) {
+                        ImageEntity imageEntity = new ImageEntity();
+                        imageEntity.setBoat(boat);
+                        imageEntity.setUrl(imageSrc);
+                        imageEntities.add(imageEntity);
+                    }
                 }
             }
 
@@ -220,13 +224,13 @@ public class YachtWorldBoatSite implements BoatSite {
 
         By boatDetailsLoc = By.cssSelector("div[class^='boatdetails']");
 
-        if(driver.isElementPresent(boatDetailsLoc)) {
+        if (driver.isElementPresent(boatDetailsLoc)) {
             List<WebElement> elementDetails = driver.findElements(boatDetailsLoc);
 
-            for(WebElement details : elementDetails) {
+            for (WebElement details : elementDetails) {
                 String detailsText = details.getText();
 
-                if(StringUtils.isNotEmpty(detailsText)) {
+                if (StringUtils.isNotEmpty(detailsText)) {
                     //TODO: Break details on the \n char and then parse it.
                 }
             }

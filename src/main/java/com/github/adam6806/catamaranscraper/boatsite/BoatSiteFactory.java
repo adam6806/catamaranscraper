@@ -5,19 +5,20 @@ import java.util.List;
 
 public class BoatSiteFactory {
 
-    private TestBoatSite testBoatSite = new TestBoatSite();
+    public static final String YACHT_WORLD = "yachtWorld";
+    private YachtWorldBoatSite yachtWorldBoatSite = new YachtWorldBoatSite();
     private List<BoatSite> boatSites = new ArrayList<>();
 
-    public static final String TEST = "test";
-
     public BoatSiteFactory() {
-        boatSites.add(testBoatSite);
+        boatSites.add(yachtWorldBoatSite);
     }
 
     public BoatSite getBoatSite(String boatSite) {
         switch (boatSite) {
-            case TEST: return testBoatSite;
-            default: throw new UnsupportedOperationException("This boat site does not exist. Please use constants available in BoatSiteFactoryClass");
+            case YACHT_WORLD:
+                return yachtWorldBoatSite;
+            default:
+                throw new UnsupportedOperationException("This boat site does not exist. Please use constants available in BoatSiteFactoryClass");
         }
     }
 

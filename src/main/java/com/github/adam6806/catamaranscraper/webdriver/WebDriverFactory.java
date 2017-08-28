@@ -1,7 +1,4 @@
-package com.github.adam6806.catamaranscraper.boatsite;
-
-import driver.Driver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+package com.github.adam6806.catamaranscraper.webdriver;
 
 import java.io.FileNotFoundException;
 import java.net.URL;

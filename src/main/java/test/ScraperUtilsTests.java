@@ -1,7 +1,7 @@
 package test;
 
 
-import com.github.adam6806.catamaranscraper.boatsitescraperutils.ScraperUtils;
+import com.github.adam6806.catamaranscraper.webdriver.ScraperUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScraperUtilsTests {
+
     ScraperUtils scraperUtils = new ScraperUtils();
+
     @Test
     public void getTextByPatternTest() {
 
@@ -77,7 +79,7 @@ public class ScraperUtilsTests {
         //test it can correctly bring back matches
         List<String> testSrc1Pattern = scraperUtils.getTextArrayByPattern(extractionPattern1, src1);
         Assert.assertTrue(testSrc1Pattern.size() == 2);
-        for(String match: testSrc1Pattern) {
+        for (String match : testSrc1Pattern) {
             Assert.assertTrue(expectedMatchOnSrc1.contentEquals(match));
         }
 
@@ -85,14 +87,14 @@ public class ScraperUtilsTests {
         List<String> testSrc2Pattern = scraperUtils.getTextArrayByPattern(extractionPattern2, src2);
         Assert.assertTrue(testSrc2Pattern.size() == expectedMatchesOnSrc2.size());
 
-        for(int i = 0; i < testSrc2Pattern.size() && i < expectedMatchesOnSrc2.size(); i++) {
+        for (int i = 0; i < testSrc2Pattern.size() && i < expectedMatchesOnSrc2.size(); i++) {
             Assert.assertTrue(testSrc2Pattern.get(i).equals(expectedMatchesOnSrc2.get(i)));
         }
 
         List<String> testSrc3Pattern = scraperUtils.getTextArrayByPattern(extractionPattern3, src3);
         Assert.assertTrue(testSrc3Pattern.size() == expectedMatchesOnSrc3.size());
 
-        for(int i = 0; i < testSrc3Pattern.size() && i < expectedMatchesOnSrc3.size(); i++) {
+        for (int i = 0; i < testSrc3Pattern.size() && i < expectedMatchesOnSrc3.size(); i++) {
             Assert.assertTrue(testSrc3Pattern.get(i).equals(expectedMatchesOnSrc3.get(i)));
         }
 
@@ -111,7 +113,7 @@ public class ScraperUtilsTests {
 
     @Test
     public void testCleanHtml() {
-        String uncleandHTML = "    <div class=\"confirmation contactSellerFormSuccess\" id=\"contactSellerFormSuccess_2750007\" style=\"display:none\">\n" +
+        String uncleanHTML = "    <div class=\"confirmation contactSellerFormSuccess\" id=\"contactSellerFormSuccess_2750007\" style=\"display:none\">\n" +
                 "        <p>Thank You</p>\n" +
                 "        <p>Your form has been submitted successfully. A representative will be in touch shortly</p>\n" +
                 "    </div>\n" +
@@ -123,7 +125,7 @@ public class ScraperUtilsTests {
                 "                    \n" +
                 "    <div class=\"company contactSellerFormCompany\" id=\"contactSellerFormCompany_2750007\">The Multihull Company</div>";
 
-        String cleanedHTML = scraperUtils.cleanHTML(uncleandHTML);
+        String cleanedHTML = scraperUtils.cleanHTML(uncleanHTML);
 
         Assert.assertTrue(!cleanedHTML.contains("\u0026"));
         Assert.assertTrue(!cleanedHTML.contains("\\n"));
