@@ -1,6 +1,5 @@
 package com.github.adam6806.catamaranscraper.boatsite;
 
-
 import com.github.adam6806.catamaranscraper.database.model.BoatEntity;
 import com.github.adam6806.catamaranscraper.database.model.ImageEntity;
 import com.github.adam6806.catamaranscraper.webdriver.BoatSiteDownException;
@@ -19,10 +18,9 @@ import java.util.*;
 
 public class YachtWorldBoatSite implements BoatSite {
 
+    private List<BoatEntity> entities;
     private static final String URL = "http://www.yachtworld.com/core/listing/cache/searchResults.jsp?toPrice=175000&fromPrice=25000&enid=101&Ntk=boatsEN&type=%28Sail%29+Catamaran&searchtype=advancedsearch&hmid=0&sm=3&enid=0&cit=true&luom=126&currencyid=100&boatsAddedSelected=-1&ftid=0&slim=quick&No=0&rid=100&rid=104&rid=105&rid=107&rid=112&rid=115&rid=125&fracts=1&ps=2000&Ns=PBoat_sortByPriceDesc|1";
     private static final String MAIN_URL = "http://www.yachtworld.com";
-    private Log logger = new SimpleLog(YachtWorldBoatSite.class.getName());
-    private List<BoatEntity> entities;
     private Driver driver;
 
     public static void main(String[] args) {
@@ -152,7 +150,7 @@ public class YachtWorldBoatSite implements BoatSite {
             String priceSrc = ScraperUtils.cleanHTML(driver.getElementHtml(boatPriceLoc));
             String priceUSExtractionPattern = "US\\$\\s*([0-9,.]*)";
 
-            String price = ScraperUtils.cleanPrice(ScraperUtils.getTextByPattern(priceUSExtractionPattern, priceSrc));
+            String price = ScraperUtils.cleanNumber(ScraperUtils.getTextByPattern(priceUSExtractionPattern, priceSrc));
 
             try {
                 boat.setPrice(Long.parseLong(price));
@@ -226,14 +224,37 @@ public class YachtWorldBoatSite implements BoatSite {
 
         if (driver.isElementPresent(boatDetailsLoc)) {
             List<WebElement> elementDetails = driver.findElements(boatDetailsLoc);
+            StringBuilder stringBuilder = new StringBuilder();
 
             for (WebElement details : elementDetails) {
                 String detailsText = details.getText();
 
-                if (StringUtils.isNotEmpty(detailsText)) {
-                    //TODO: Break details on the \n char and then parse it.
+                if(StringUtils.isNotEmpty(detailsText)) {
+                    if(detailsText.contains("\n")){
+                        String[] splitDetails = detailsText.split("\\n");
+
+                        for(int i = 0; i < splitDetails.length; i++){
+                            String detail = splitDetails[i];
+                            stringBuilder.append(detail.trim()).append(" ");
+
+                            if(detail.contains("Length")) {
+                                try {
+                                    String length = ScraperUtils.cleanNumber(splitDetails[i+1]);
+                                    boat.setLength(Integer.parseInt(length));
+                                    stringBuilder.append(length).append(" ");
+                                    i++;
+                                } catch (NumberFormatException nfe) {
+                                    throw new BoatSiteDownException("Unable to parse length into an integer: " + nfe.getMessage());
+                                }
+                            }
+                        }
+                    } else {
+                        stringBuilder.append(detailsText).append(" ");
+                    }
                 }
             }
+
+            boat.setDescription(stringBuilder.toString().trim());
         } else {
             throw new BoatSiteDownException("Unable to locate details locators");
         }
