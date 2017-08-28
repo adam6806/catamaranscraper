@@ -4,12 +4,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.annotation.Nullable;
+import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -24,9 +26,12 @@ public class Driver implements WebDriver {
 
     public Driver() {
 
-        FirefoxOptions options = new FirefoxOptions();
-        options.setLogLevel(java.util.logging.Level.SEVERE);
-        driver = new FirefoxDriver(options);
+        FirefoxProfile firefoxProfile = new FirefoxProfile();
+        ClassLoader classLoader = Driver.class.getClassLoader();
+        URL resource = classLoader.getResource("adblock.xpi");
+        File adblock = new File(resource.getPath());
+        firefoxProfile.addExtension(adblock);
+        driver = new FirefoxDriver(firefoxProfile);
     }
 
     public int getTimeout() {

@@ -184,16 +184,12 @@ public class YachtWorldBoatSite implements BoatSite {
         Set<ImageEntity> imageEntities = new HashSet<>();
 
         By galleryCarousel = By.cssSelector("div[class^='galleria-thumbnails-container']");
-        By mainImageLoc = By.className("galleria-images");
         String imageSrcPattern = "<img.*?src=\"(.*?)\"";
 
-        if (driver.isElementPresent(galleryCarousel)
-                && driver.isElementPresent(mainImageLoc)) {
+        if (driver.isElementPresent(galleryCarousel)) {
 
-            String mainImageSrc = ScraperUtils.cleanHTML(driver.getElementHtml(mainImageLoc));
             String caroselImageSrc = ScraperUtils.cleanHTML(driver.getElementHtml(galleryCarousel));
             List<String> divList = getDivList(caroselImageSrc);
-            divList.add(mainImageSrc);
 
             for (String div : divList) {
                 if (StringUtils.isNotEmpty(div)

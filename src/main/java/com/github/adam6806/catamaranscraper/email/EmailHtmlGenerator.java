@@ -17,7 +17,7 @@ public class EmailHtmlGenerator {
             stringBuilder.append(boat.getLocation());
             stringBuilder.append("</p>");
             stringBuilder.append("<a href=\"").append(boat.getUrl()).append("\">");
-            stringBuilder.append("<img src=\"").append(boat.getImages().iterator().next().getUrl()).append("\"/>");
+            stringBuilder.append("<img width=\"400\" src=\"").append(boat.getImages().iterator().next().getUrl()).append("\"/>");
             stringBuilder.append("</a></div>");
         }
         return stringBuilder.toString();
